@@ -4,8 +4,8 @@ uvicorn  # ASGI 服务器
 gunicorn  # WSGI 服务器 + UvicornWorker
 
 # OCR / AI
-paddleocr==2.7.0
-paddlepaddle==2.6.0  # 或 paddlepaddle-gpu==2.6.0.post118
+paddleocr
+paddlepaddle
 
 # PDF / 图片处理
 pdf2image
