@@ -69,7 +69,10 @@ uvicorn app.main:app --host 0.0.0.0 --port 8001
 
 
 # 測試
-http://127.0.0.1:8001/api/ocr/run
+```shell
+curl -X POST "http://192.168.201.24:8001/api/ocr/upload_pdf" \
+  -F "file=@/Users/yangfengkai/Downloads/AT260100004964081.pdf"
+```
 
 # PyCharm配置 (congiguration)
 module <- uvicorn
