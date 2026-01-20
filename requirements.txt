@@ -1,0 +1,14 @@
+# Web 框架
+fastapi
+uvicorn  # ASGI 服务器 (監聽 port、處理連線)
+gunicorn  # WSGI 服务器
+
+
+paddleocr # PaddlePaddle 寫好的 OCR 成品
+paddlepaddle # 深度學習引擎（像 TensorFlow / PyTorch）
+# pip install paddlepaddle-gpu -i https://www.paddlepaddle.org.cn/packages/stable/cu118/ (GPU版 推薦，需CUDA)
+pdf2image # PDF轉圖片
+pdfminer.six # PDF截取文字
+pillow # 處理圖片（Python 的圖片基礎庫）
+fastapi # 業務邏輯（OCR）
+rapidfuzz # 模糊匹配（容錯率更高）
