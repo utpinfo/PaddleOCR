@@ -14,3 +14,5 @@ pillow
 
 # 模糊匹配
 rapidfuzz
+
+python-multipart
