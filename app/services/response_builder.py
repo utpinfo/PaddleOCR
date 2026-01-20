@@ -1,20 +1,7 @@
 from copy import deepcopy
 from uuid import uuid4
 
-# 所有票種 key
-ALL_INVOICE_TYPES = [
-    "AirTransport","BankSlip","BusInvoice","CustomsDeclaration","CustomsPaymentReceipt",
-    "ElectronicFlightTicketFull","ElectronicTollSummary","ElectronicTrainTicketFull",
-    "MachinePrintedInvoice","MedicalHospitalizedInvoice","MedicalOutpatientInvoice",
-    "MotorVehicleSaleInvoice","MotorVehicleSaleInvoiceElectronic","NonTaxIncomeElectronicBill",
-    "NonTaxIncomeGeneralBill","OnlineTaxiItinerary","OtherInvoice","OverseasInvoice",
-    "QuotaInvoice","SaleInventory","ShippingInvoice","ShoppingReceipt","TaxPayment",
-    "TaxiTicket","TollInvoice","TrainTicket","UsedCarPurchaseInvoice",
-    "UsedCarPurchaseInvoiceElectronic","VatCommonInvoice","VatElectronicCommonInvoice",
-    "VatElectronicInvoiceBlockchain","VatElectronicInvoiceFull","VatElectronicInvoiceToll",
-    "VatElectronicSpecialInvoice","VatElectronicSpecialInvoiceFull","VatInvoiceRoll",
-    "VatSalesList","VatSpecialInvoice"
-]
+from app.entities.invoice_type import INVOICE_TYPE
 
 def build_response_json(ocr_text, invoice_data, page=1):
     """
@@ -22,7 +9,7 @@ def build_response_json(ocr_text, invoice_data, page=1):
     invoice_data: classify_invoice 返回的字典 {"SubType", "TypeDescription", "Type"}
     """
     # 建立空的 SingleInvoiceInfos
-    single_invoice_infos = {key: None for key in ALL_INVOICE_TYPES}
+    single_invoice_infos = {key: None for key in INVOICE_TYPE}
 
     # 如果分類成功，填充對應票種
     subtype = invoice_data["SubType"]
