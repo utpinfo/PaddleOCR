@@ -31,7 +31,6 @@ IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".tiff"]
 
 
 def _ocr_single(img_path: Path) -> str:
-    """單張圖片 OCR，CPU 最佳化，兼容 PP-OCRv3/v4/v5"""
     if not img_path.exists():
         return ""
 
@@ -40,17 +39,40 @@ def _ocr_single(img_path: Path) -> str:
     import numpy as np
     img_np = np.array(img)
 
-    result = ocr.ocr(img_np)  # 可直接傳 numpy array
+    result = ocr.ocr(img_np)
 
-    text_lines = []
-    # v4/v5 返回 dict list
+    rec_texts = []
+    rec_boxes = []
+
+    # 兼容 v3/v4/v5
     if isinstance(result, list) and len(result) > 0 and isinstance(result[0], dict):
-        text_lines = result[0].get('rec_texts', [])
+        rec_texts = result[0].get('rec_texts', [])
+        rec_boxes = result[0].get('rec_boxes', [])
     else:
-        # v3 格式
-        text_lines = [line[1][0] for line in result]
+        rec_texts = [line[1][0] for line in result]
+        rec_boxes = [line[0] for line in result]
 
-    return "\n".join(text_lines)
+    lines = []
+    for box, text in zip(rec_boxes, rec_texts):
+        # 將 box 轉成 numpy array
+        box_arr = np.array(box)
+        if box_arr.ndim == 2 and box_arr.shape[1] == 2:
+            y = box_arr[:,1].mean()
+            x = box_arr[:,0].mean()
+        elif box_arr.ndim == 1 and len(box_arr) >= 4:
+            # 單個矩形框 [x0,y0,x1,y1]
+            x = (box_arr[0] + box_arr[2]) / 2
+            y = (box_arr[1] + box_arr[3]) / 2
+        else:
+            # fallback
+            x = 0
+            y = 0
+        lines.append((y, x, text))
+
+    # 先按 y 排序，再按 x 排序
+    lines.sort(key=lambda t: (t[0], t[1]))
+
+    return "\n".join([t[2] for t in lines])
 
 
 
