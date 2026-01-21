@@ -67,7 +67,7 @@ async def ocr_upload_file(file: UploadFile = File(...)):
             pdf_type = "image_file"
 
         # 分類票據
-        invoice_info = classify_invoice(text, threshold=80)
+        invoice_info = classify_invoice(text, threshold=50)
         subtype = invoice_info["SubType"]
         invoice_detail = parse_invoice_by_type(text, subtype)
 

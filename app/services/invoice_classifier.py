@@ -30,6 +30,7 @@ def classify_invoice(ocr_text: str, threshold=80):
     # 模糊匹配 fallback
     choices = [normalize_text(v[0]) for v in INVOICE_TYPE.values()]
     match, score, idx = process.extractOne(ocr_text_norm, choices)
+    print("SubType Verify - ", "score:", score, ", threshold:", threshold)
     if score >= threshold:
         subtype = list(INVOICE_TYPE.keys())[idx]
         chinese_name, type_id = INVOICE_TYPE[subtype]

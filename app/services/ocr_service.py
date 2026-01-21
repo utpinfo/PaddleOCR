@@ -17,11 +17,13 @@ ocr = PaddleOCR(
     lang="ch",
     use_angle_cls=False,  # 關閉方向檢測，加速
     enable_mkldnn=True,  # CPU 加速
-    rec_batch_num=10,  # 文本识别参数
-    # 其他优化参数
-    det_db_thresh=0.3,
-    det_db_box_thresh=0.5,
-    det_db_unclip_ratio=1.5,
+    rec_batch_num=10,  # OCR 識別階段的批次大小（batch size）。預設 6， 值越大：GPU 利用率高、整體速度快，但顯存消耗大。
+    # 二值化閾值（像素分數 > 0.3 視為文字區域）。值越低越容易偵測弱文字，但雜訊也多。
+    #det_db_thresh=0.3,
+    # 文字框分數閾值（框內平均分數 > 0.5 才保留該框）。值越高越嚴格，漏檢率上升。
+    #det_db_box_thresh=0.5,
+    # 文字框擴張比例（DBNet 後處理時向外膨脹 1.5 倍）。值越大框越鬆，適合彎曲/變形文字；太小會漏邊緣。
+    #det_db_unclip_ratio=1.5,
     ocr_version="PP-OCRv4",
 )
 
@@ -29,20 +31,27 @@ IMAGE_EXTENSIONS = [".png", ".jpg", ".jpeg", ".tiff"]
 
 
 def _ocr_single(img_path: Path) -> str:
-    """單張圖片 OCR，CPU 最佳化"""
+    """單張圖片 OCR，CPU 最佳化，兼容 PP-OCRv3/v4/v5"""
     if not img_path.exists():
         return ""
-    # 打開圖片，轉 RGB，縮小，加速 OCR
+
     img = Image.open(img_path).convert("RGB")
     img.thumbnail((1200, 1200))
-
-    # 轉 numpy array，直接傳給 PaddleOCR
     import numpy as np
     img_np = np.array(img)
 
-    result = ocr.ocr(img_np)  # ✅ 省掉磁碟 I/O
-    text_lines = [line[1][0] for line in result]
+    result = ocr.ocr(img_np)  # 可直接傳 numpy array
+
+    text_lines = []
+    # v4/v5 返回 dict list
+    if isinstance(result, list) and len(result) > 0 and isinstance(result[0], dict):
+        text_lines = result[0].get('rec_texts', [])
+    else:
+        # v3 格式
+        text_lines = [line[1][0] for line in result]
+
     return "\n".join(text_lines)
+
 
 
 def ocr_images(img_paths: list[Path]) -> str:
