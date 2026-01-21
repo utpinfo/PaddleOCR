@@ -6,20 +6,21 @@ from fastapi import APIRouter, UploadFile, File
 from app.services.invoice_classifier import classify_invoice, parse_invoice_by_type
 from app.services.pdf_service import is_text_pdf, extract_text_from_pdf, pdf_to_images
 from app.services.ocr_service import ocr_images
-from app.core.config import PDF_PATH
+from app.core.config import UPLOAD_DIR
 from app.services.response_builder import build_response_json
 
 router = APIRouter()
 UPLOAD_DIR = "uploaded_pdfs"
 
+
 @router.get("/ocr/run")
 def run_ocr():
     """對指定 PDF 進行 OCR / 文字抽取"""
-    if is_text_pdf(PDF_PATH):
-        text = extract_text_from_pdf(PDF_PATH)
+    if is_text_pdf(UPLOAD_DIR):
+        text = extract_text_from_pdf(UPLOAD_DIR)
         return {"type": "text_pdf", "text": text}
     else:
-        img_paths = pdf_to_images(PDF_PATH)
+        img_paths = pdf_to_images(UPLOAD_DIR)
         text = ocr_images(img_paths)
         return {"type": "scanned_pdf", "text": text}
 

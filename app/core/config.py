@@ -1,8 +1,7 @@
-import os
+from pathlib import Path
 
-PDF_PATH = ""
+ROOT_DIR = Path(__file__).resolve().parents[2]
+
 DPI = 300
-TEMP_DIR = "pdf_images"
-
-# 建立暫存資料夾
-os.makedirs(TEMP_DIR, exist_ok=True)
+UPLOAD_DIR = ROOT_DIR / "uploaded_pdfs"
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
