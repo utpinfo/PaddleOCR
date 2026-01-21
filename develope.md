@@ -8,11 +8,17 @@ pyenv install 3.12.11
 pip install -r requirements.txt
 ```
 
+## Mac 額外安裝
+
+```shell
+brew install poppler
+```
+
 ## Debian 額外安裝
 
 ```shell
 apt update && apt install -y \
-    libsm6 libxext6 libxrender-dev libglib2.0-0 ffmpeg
+    libsm6 libxext6 libxrender-dev libglib2.0-0 ffmpeg poppler-utils
 ```
 
 # PyCharm配置 (congiguration)
