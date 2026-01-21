@@ -1,4 +1,4 @@
-🏆 3. PaddleOCR — 中文/高精度場景最強
+# PaddleOCR — 中文/高精度場景最強
 
 # 項目結構
 ```
@@ -26,7 +26,7 @@ ocr-api/
 ├── Dockerfile
 └── README.md
 ```
-## 啟動API
+## 手動啟動
 
 ```shell
 gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8001
@@ -63,17 +63,8 @@ WantedBy=multi-user.target
 EFO
 ```
 
-
-# 啟動方式（配合目錄）
-uvicorn app.main:app --host 0.0.0.0 --port 8001
-
-
 # 測試
 ```shell
 curl -X POST "http://192.168.201.24:8001/api/ocr/upload_pdf" \
   -F "file=@/Users/yangfengkai/Downloads/AT260100004964081.pdf"
 ```
-
-# PyCharm配置 (congiguration)
-module <- uvicorn
-scripts <- app.main:app --host 0.0.0.0 --port 8001 --reload

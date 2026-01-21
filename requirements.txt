@@ -5,14 +5,22 @@ gunicorn  # WSGI 服务器 + UvicornWorker
 
 # OCR / AI
 paddleocr
+# 深度學習引擎
 paddlepaddle
+# 深度學習引擎 (GPU版 推薦，需CUDA)
+#paddlepaddle-gpu
+#--index-url https://www.paddlepaddle.org.cn/packages/stable/cu118/
 
 # PDF / 图片处理
 pdf2image
+# 從 PDF截取文字
 pdfminer.six
+# 處理圖片（Python 的圖片基礎庫）
 pillow
 
 # 模糊匹配
 rapidfuzz
-
+# FastAPI 用來解析 multipart/form-data 的套件
 python-multipart
+
+

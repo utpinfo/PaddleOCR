@@ -1,38 +1,34 @@
-🏆 3. PaddleOCR — 中文/高精度場景最強
+# PaddleOCR — 中文/高精度場景最強
 
-# 安裝套件
-pip install paddleocr paddlepaddle pdf2image pdfminer.six pillow fastapi uvicorn rapidfuzz
+## Python 安裝套件
 
-<!--
-paddlepaddle = 深度學習引擎（像 TensorFlow / PyTorch）
-# pip install paddlepaddle-gpu -i https://www.paddlepaddle.org.cn/packages/stable/cu118/ (GPU版 推薦，需CUDA)
-paddleocr = 用 PaddlePaddle 寫好的 OCR 成品
-pdf2image：把 PDF 變成圖片
-pdfminer.six：從 PDF 直接「挖文字」
-Pillow：處理圖片（Python 的圖片基礎庫）
-Uvicorn   ← 監聽 port、處理連線
-FastAPI   ← 業務邏輯（OCR）
-python-multipart  ← FastAPI 用來解析 multipart/form-data 的套件
-rapidfuzz  ← 模糊匹配（容錯率更高）a   
--->
-## 環境配置
-
-- pyenv install 3.12.11
-- pip install -r requirements.txt
+```shell
+cd PaddleOCR
+pyenv install 3.12.11
+pip install -r requirements.txt
+```
 
 ## Debian 額外安裝
+
 ```shell
 apt update && apt install -y \
     libsm6 libxext6 libxrender-dev libglib2.0-0 ffmpeg
 ```
-    
+
+# PyCharm配置 (congiguration)
+
+```config
+module <- gunicorn
+scripts <- -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8001
+```
+
 # 範例代碼
+
 ```python
 import os
 from pdfminer.high_level import extract_text
 from pdf2image import convert_from_path
 from paddleocr import PaddleOCR
-
 
 PDF_PATH = "/Users/yangfengkai/Downloads/AT260100004964022.pdf"
 DPI = 300
