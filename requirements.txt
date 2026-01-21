@@ -4,7 +4,8 @@ uvicorn  # ASGI 服务器
 gunicorn  # WSGI 服务器 + UvicornWorker
 
 # OCR / AI
-paddleocr
+paddleocr[all]
+paddlex[ocr]
 # 深度學習引擎
 paddlepaddle
 # 深度學習引擎 (GPU版 推薦，需CUDA)
@@ -23,4 +24,4 @@ rapidfuzz
 # FastAPI 用來解析 multipart/form-data 的套件
 python-multipart
 
-
+bs4
