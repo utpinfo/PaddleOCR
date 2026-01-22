@@ -5,7 +5,6 @@ import numpy as np
 from PIL import Image
 from paddleocr import PaddleOCR
 import multiprocessing
-
 import layoutparser as lp
 
 num_cores = os.cpu_count()
@@ -17,7 +16,7 @@ print(f"多核 CPU，共 {num_cores} 核")
 ocr = PaddleOCR(
     lang="ch",
     use_angle_cls=True,
-    enable_mkldnn=True,
+    enable_mkldnn=False,
     rec_batch_num=20,
     text_det_box_thresh=0.7,
     text_det_thresh=0.4,

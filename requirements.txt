@@ -25,3 +25,4 @@ rapidfuzz
 python-multipart
 
 bs4
+layoutparser

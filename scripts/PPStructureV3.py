@@ -8,11 +8,12 @@ import csv
 pipeline = PPStructureV3(
     use_doc_orientation_classify=False,
     use_doc_unwarping=False,
-    ocr_version="PP-OCRv4"
+    ocr_version="PP-OCRv4",
+    enable_mkldnn=False,
 )
 
 # 2️⃣ OCR 預測
-input_path = "/Users/yangfengkai/Downloads/test.png"
+input_path = "/home/yangfk0128/AT260100004950032.png"
 output_path = Path("output")
 output_path.mkdir(exist_ok=True, parents=True)
 
