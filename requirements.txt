@@ -5,6 +5,7 @@ gunicorn  # WSGI 服务器 + UvicornWorker
 
 # OCR / AI
 paddleocr[all]
+# https://www.paddlepaddle.org.cn/packages/stable/cpu/
 paddlex[ocr]
 # 深度學習引擎
 paddlepaddle

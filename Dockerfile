@@ -1,4 +1,5 @@
-FROM python:3.10-slim
+# 版本查詢 (https://hub.docker.com/_/python)
+FROM python:3.12.12-slim
 
 # 系統依賴（OpenCV / Paddle 需要）
 RUN apt-get update && apt-get install -y \
@@ -8,10 +9,13 @@ RUN apt-get update && apt-get install -y \
 
 # Python 套件（經驗證穩定）
 RUN pip install --no-cache-dir \
-    numpy==1.26.4 \
-    paddlepaddle==3.2.0 \
-    paddleocr \
-    paddlex \
-    pandas==2.1.4
+    fastapi uvicorn gunicorn \
+    "paddleocr[all]" paddlex[ocr] paddlepaddle \
+    pdf2image pdfminer.six pillow \
+    rapidfuzz python-multipart bs4 layoutparser
 
 WORKDIR /app
+
+
+# 容器啟動時預設進入 bash
+CMD ["/bin/bash"]

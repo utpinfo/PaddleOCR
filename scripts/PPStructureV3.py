@@ -18,7 +18,7 @@ output_path = Path("output")
 output_path.mkdir(exist_ok=True, parents=True)
 
 output = pipeline.predict(input=input_path)
-
+print("****************************************")
 # 3️⃣ 遍歷每頁結果
 for page_idx, res in enumerate(output):
     print(f"=== Page {page_idx + 1} ===")
@@ -28,7 +28,7 @@ for page_idx, res in enumerate(output):
 
     invoice_info = {}
     table_rows_clean = []
-
+    print(parsing_list)
     for block in parsing_list:
         # ⭐ 正確方式：LayoutBlock → dict
         d = block.to_dict()
@@ -43,7 +43,8 @@ for page_idx, res in enumerate(output):
 
             if match := re.search(r"开票日期[:：]?\s*([\d年月日]+)", content):
                 invoice_info["invoice_date"] = match.group(1)
-
+        elif label == "figure_title":
+            invoice_info["invoice_title"] = content
         # 表格欄位（HTML）
         elif label == "table" and content:
             soup = BeautifulSoup(content, "html.parser")
@@ -74,6 +75,7 @@ for page_idx, res in enumerate(output):
 
             writer.writerow(["发票号码", invoice_info.get("invoice_number", "")])
             writer.writerow(["开票日期", invoice_info.get("invoice_date", "")])
+            writer.writerow(["开票標題", invoice_info.get("invoice_title", "")])
             writer.writerow([])
 
             writer.writerows(table_rows_clean)
