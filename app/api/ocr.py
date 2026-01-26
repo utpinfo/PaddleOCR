@@ -70,7 +70,7 @@ async def ocr_upload_file(file: UploadFile = File(...)):
 
 
 # 初始化一次
-model_path = "/Users/yangfengkai/Models/"
+model_path = "/Users/yangfengkai/Models"
 gguf_path = f"{model_path}/Qwen_Qwen3-30B-A3B-Q5_K_M.gguf"
 tokenizer = AutoTokenizer.from_pretrained(f"{model_path}/Qwen3-30B-A3B", local_files_only=True, trust_remote_code=True)
 model = Llama(model_path=gguf_path, n_ctx=4096, n_threads=16,  n_gpu_layers=6)
@@ -82,4 +82,22 @@ async def generate(request: Request):
     messages = data.get("messages", [])
     text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     completion = model(prompt=text, max_tokens=300, echo=False, stop=["<think>", "</think>"])
+    return {"text": completion["choices"][0]["text"]}
+
+model_path = "/Users/yangfengkai/Models"
+gguf_path = f"{model_path}/Meta-Llama-3.1-8B-Instruct-Q5_K_M.gguf"
+model = Llama(model_path=gguf_path, n_ctx=2048, n_threads=8, n_gpu_layers=32)
+
+
+@router.post("/llama3/generate")
+async def generate(request: Request):
+    data = await request.json()  # async
+    messages = data.get("messages", [])
+    prompt = ""
+    for m in messages:
+        prompt += f"<|start_header_id|>{m['role']}<|end_header_id|>\n"
+        prompt += f"{m['content']}\n"
+    prompt += "<|start_header_id|>assistant<|end_header_id|>\n"
+    print(prompt)
+    completion = model(prompt, max_tokens=512, echo=False, stop=["<|end_of_text|>", "\n\n"])
     return {"text": completion["choices"][0]["text"]}
