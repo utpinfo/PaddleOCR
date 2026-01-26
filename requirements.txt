@@ -7,8 +7,8 @@ gunicorn  # WSGI 服务器 + UvicornWorker
 paddleocr[all]
 # https://www.paddlepaddle.org.cn/packages/stable/cpu/
 paddlex[ocr]
-# 深度學習引擎
-paddlepaddle
+# 深度學習引擎 (PPCHATOCR4在3.3.0有异常)
+paddlepaddle==3.2.0
 # 深度學習引擎 (GPU版 推薦，需CUDA)
 #paddlepaddle-gpu
 #--index-url https://www.paddlepaddle.org.cn/packages/stable/cu118/
@@ -27,3 +27,13 @@ python-multipart
 
 bs4
 layoutparser
+
+# (LLM)开发套件
+#paddlenlp
+#Taskflow
+
+#Qwen3
+#torch
+#transformers
+#accelerate
+#llama-cpp-python

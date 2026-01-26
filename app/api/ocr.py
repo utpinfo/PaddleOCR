@@ -2,11 +2,14 @@ import shutil
 from pathlib import Path
 
 from fastapi import APIRouter, UploadFile, File
+from llama_cpp import Llama
+from transformers import AutoTokenizer
 
 from app.services.invoice_classifier import classify_invoice, parse_invoice_by_type
 from app.services.response_builder import build_response_json
 from app.services.pdf_service import file_to_text
 from app.core.config import UPLOAD_DIR
+from fastapi import Request
 
 router = APIRouter()
 
@@ -64,3 +67,19 @@ async def ocr_upload_file(file: UploadFile = File(...)):
 
     except Exception as e:
         return {"error": str(e)}
+
+
+# 初始化一次
+model_path = "/opt/Models"
+gguf_path = f"{model_path}/Qwen_Qwen3-30B-A3B-Q5_K_M.gguf"
+tokenizer = AutoTokenizer.from_pretrained(f"{model_path}/Qwen3-30B-A3B", local_files_only=True, trust_remote_code=True)
+model = Llama(model_path=gguf_path, n_ctx=4096, n_threads=8,  n_gpu_layers=0)
+
+
+@router.post("/qwen3/generate")
+async def generate(request: Request):
+    data = await request.json()  # async
+    messages = data.get("messages", [])
+    text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    completion = model(prompt=text, max_tokens=128, echo=False)
+    return {"text": completion["choices"][0]["text"]}

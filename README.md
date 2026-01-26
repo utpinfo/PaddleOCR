@@ -68,3 +68,22 @@ EFO
 curl -X POST "http://192.168.201.24:8001/api/ocr/upload_pdf" \
   -F "file=@/Users/yangfengkai/Downloads/AT260100004964081.pdf"
 ```
+
+
+
+
+# Qwen3
+1. gguf 是「推理用成品模型」
+2. safetensors 是「訓練用原始模型」
+
+# GGUF 下載
+```
+HF_ENDPOINT=https://hf-mirror.com huggingface-cli download bartowski/Qwen_Qwen3-30B-A3B-GGUF --include "*Q5_K_M.gguf" --local-dir ~/Downloads
+```
+
+# safetensors 下載
+```
+wget https://hf-mirror.com/hfd/hfd.sh
+hfd.sh Qwen/Qwen3-30B-A3B --local-dir /Users/yangfengkai/Downloads/Qwen3-30B-A3B
+```
+

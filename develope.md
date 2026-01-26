@@ -26,6 +26,8 @@ apt update && apt install -y \
 ```config
 module <- gunicorn
 scripts <- -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8001
+module <- unicorn
+scripts <- app.main:app --host 0.0.0.0 --port 8001 --reload
 ```
 
 # 範例代碼
