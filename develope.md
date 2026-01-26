@@ -96,3 +96,26 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
+# Qwen3 聊天模組
+
+1. gguf 是「推理用成品模型」
+2. safetensors 是「訓練用原始模型」
+
+# GGUF 下載
+
+```
+# QWen3 系列
+HF_ENDPOINT=https://hf-mirror.com huggingface-cli download bartowski/Qwen_Qwen3-30B-A3B-GGUF --include "*Q5_K_M.gguf" --local-dir ~/Downloads
+# LLaMA 系列
+HF_ENDPOINT=https://hf-mirror.com huggingface-cli download bartowski/Meta-Llama-3.1-8B-Instruct-GGUF --include "*Q5_K_M.gguf" --local-dir ~/Models
+
+```
+
+# safetensors 下載
+
+```
+wget https://hf-mirror.com/hfd/hfd.sh
+hfd.sh Qwen/Qwen3-30B-A3B --local-dir /Users/yangfengkai/Downloads/Qwen3-30B-A3B
+```
+

@@ -70,10 +70,10 @@ async def ocr_upload_file(file: UploadFile = File(...)):
 
 
 # 初始化一次
-model_path = "/opt/Models"
+model_path = "/Users/yangfengkai/Models/"
 gguf_path = f"{model_path}/Qwen_Qwen3-30B-A3B-Q5_K_M.gguf"
 tokenizer = AutoTokenizer.from_pretrained(f"{model_path}/Qwen3-30B-A3B", local_files_only=True, trust_remote_code=True)
-model = Llama(model_path=gguf_path, n_ctx=4096, n_threads=8,  n_gpu_layers=0)
+model = Llama(model_path=gguf_path, n_ctx=4096, n_threads=16,  n_gpu_layers=6)
 
 
 @router.post("/qwen3/generate")
@@ -81,5 +81,5 @@ async def generate(request: Request):
     data = await request.json()  # async
     messages = data.get("messages", [])
     text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    completion = model(prompt=text, max_tokens=128, echo=False)
+    completion = model(prompt=text, max_tokens=300, echo=False, stop=["<think>", "</think>"])
     return {"text": completion["choices"][0]["text"]}
