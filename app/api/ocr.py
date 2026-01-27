@@ -1,6 +1,8 @@
+import platform
 import shutil
 from pathlib import Path
 
+import psutil
 from fastapi import APIRouter, UploadFile, File
 from llama_cpp import Llama
 from transformers import AutoTokenizer
@@ -10,6 +12,10 @@ from app.services.response_builder import build_response_json
 from app.services.pdf_service import file_to_text
 from app.core.config import UPLOAD_DIR
 from fastapi import Request
+
+# -1：盡量把所有層 offload 到 GPU（llama.cpp 會自動計算能放多少層，不會 OOM）
+# 0：完全不 offload，全跑在 CPU（最慢）
+n_gpu_layers = 0
 
 router = APIRouter()
 
@@ -73,7 +79,7 @@ async def ocr_upload_file(file: UploadFile = File(...)):
 model_path = "/Users/yangfengkai/Models"
 gguf_path = f"{model_path}/Qwen_Qwen3-30B-A3B-Q5_K_M.gguf"
 tokenizer = AutoTokenizer.from_pretrained(f"{model_path}/Qwen3-30B-A3B", local_files_only=True, trust_remote_code=True)
-model = Llama(model_path=gguf_path, n_ctx=4096, n_threads=16,  n_gpu_layers=6)
+model = Llama(model_path=gguf_path, n_ctx=4096, n_threads=16, n_gpu_layers=n_gpu_layers)
 
 
 @router.post("/qwen3/generate")
@@ -84,20 +90,25 @@ async def generate(request: Request):
     completion = model(prompt=text, max_tokens=300, echo=False, stop=["<think>", "</think>"])
     return {"text": completion["choices"][0]["text"]}
 
-model_path = "/Users/yangfengkai/Models"
+
 gguf_path = f"{model_path}/Meta-Llama-3.1-8B-Instruct-Q5_K_M.gguf"
-model = Llama(model_path=gguf_path, n_ctx=2048, n_threads=8, n_gpu_layers=32)
+model = Llama(model_path=gguf_path, n_ctx=2048, n_threads=8, n_gpu_layers=n_gpu_layers)
 
 
 @router.post("/llama3/generate")
 async def generate(request: Request):
-    data = await request.json()  # async
+    data = await request.json()
     messages = data.get("messages", [])
+
     prompt = ""
     for m in messages:
-        prompt += f"<|start_header_id|>{m['role']}<|end_header_id|>\n"
-        prompt += f"{m['content']}\n"
-    prompt += "<|start_header_id|>assistant<|end_header_id|>\n"
-    print(prompt)
-    completion = model(prompt, max_tokens=512, echo=False, stop=["<|end_of_text|>", "\n\n"])
-    return {"text": completion["choices"][0]["text"]}
+        prompt += f"<|start_header_id|>{m['role']}<|end_header_id|>\n\n{m['content']}<|eot_id|>\n\n"
+    prompt += "<|start_header_id|>assistant<|end_header_id|>\n\n"
+
+    completion = model(
+        prompt,
+        max_tokens=512,
+        echo=False,
+        stop=["<|eot_id|>"],
+    )
+    return {"text": completion["choices"][0]["text"].strip()}

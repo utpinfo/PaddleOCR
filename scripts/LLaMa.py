@@ -7,7 +7,7 @@ model = Llama(
     model_path=gguf_path,
     n_ctx=2048,
     n_threads=8,
-    n_gpu_layers=32  # Mac CPU
+    n_gpu_layers=0  # Mac CPU
 )
 
 prompt = (
