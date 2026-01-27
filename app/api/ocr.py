@@ -1,8 +1,5 @@
-import platform
 import shutil
 from pathlib import Path
-
-import psutil
 from fastapi import APIRouter, UploadFile, File
 from llama_cpp import Llama
 from transformers import AutoTokenizer
@@ -10,7 +7,7 @@ from transformers import AutoTokenizer
 from app.services.invoice_classifier import classify_invoice, parse_invoice_by_type
 from app.services.response_builder import build_response_json
 from app.services.pdf_service import file_to_text
-from app.core.config import UPLOAD_DIR
+from app.core.config import UPLOAD_DIR, QWEN_GGUF, QWEN_TOKENIZER, LLAMA_GGUF
 from fastapi import Request
 
 # -1：盡量把所有層 offload 到 GPU（llama.cpp 會自動計算能放多少層，不會 OOM）
@@ -76,10 +73,8 @@ async def ocr_upload_file(file: UploadFile = File(...)):
 
 
 # 初始化一次
-model_path = "/Users/yangfengkai/Models"
-gguf_path = f"{model_path}/Qwen_Qwen3-30B-A3B-Q5_K_M.gguf"
-tokenizer = AutoTokenizer.from_pretrained(f"{model_path}/Qwen3-30B-A3B", local_files_only=True, trust_remote_code=True)
-model = Llama(model_path=gguf_path, n_ctx=4096, n_threads=16, n_gpu_layers=n_gpu_layers)
+tokenizer = AutoTokenizer.from_pretrained(str(QWEN_TOKENIZER), local_files_only=True, trust_remote_code=True)
+model = Llama(model_path=str(QWEN_GGUF), n_ctx=4096, n_threads=16, n_gpu_layers=n_gpu_layers)
 
 
 @router.post("/qwen3/generate")
@@ -91,8 +86,7 @@ async def generate(request: Request):
     return {"text": completion["choices"][0]["text"]}
 
 
-gguf_path = f"{model_path}/Meta-Llama-3.1-8B-Instruct-Q5_K_M.gguf"
-model = Llama(model_path=gguf_path, n_ctx=2048, n_threads=8, n_gpu_layers=n_gpu_layers)
+model = Llama(model_path=str(LLAMA_GGUF), n_ctx=2048, n_threads=8, n_gpu_layers=n_gpu_layers)
 
 
 @router.post("/llama3/generate")
