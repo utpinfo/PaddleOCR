@@ -8,7 +8,8 @@ paddleocr[all]
 # https://www.paddlepaddle.org.cn/packages/stable/cpu/
 paddlex[ocr]
 # 深度學習引擎 (PPCHATOCR4在3.3.0有异常)
-paddlepaddle==3.2.0
+paddlepaddle
+#paddlepaddle==3.2.0
 # 深度學習引擎 (GPU版 推薦，需CUDA)
 #paddlepaddle-gpu
 #--index-url https://www.paddlepaddle.org.cn/packages/stable/cu118/
@@ -29,11 +30,11 @@ bs4
 layoutparser
 
 # (LLM)开发套件
-#paddlenlp
-#Taskflow
+paddlenlp
+Taskflow
 
 #Qwen3
-#torch
-#transformers
-#accelerate
-#llama-cpp-python
+torch
+transformers
+accelerate
+llama-cpp-python

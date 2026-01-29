@@ -104,18 +104,38 @@ if __name__ == "__main__":
 
 # GGUF 下載
 
+- 量化版本 (.safetensors 或 .gguf)
+- 原始版本 (.bin / .pt / .safetensors，沒有量化說明)
+
+## Download Method[1]: By Git
+
+```git
+git lfs install
+git clone https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF ~/Models/Qwen2.5-7B-Instruct-GGUF
 ```
+
+## Download Method[2]: By Huggingface-cli
+
+```shell
+# hf download <repo_id> [<filename1> <filename2> ...] [--local-dir <dir>] [--revision <branch/commit>]
+export HF_ENDPOINT=https://hf-mirror.com
+hf download Qwen/Qwen2.5-7B-Instruct-GGUF --local-dir ~/Models/Qwen2.5-7B-Instruct-GGUF
+```
+
+## Download List
+
+```
+export HF_ENDPOINT=https://hf-mirror.com
+
+# Qwen2 系列 (原始未量化模型)
+git lfs install  # 確保支持大文件
+git clone https://huggingface.co/Qwen/Qwen2-7B-Instruct ~/Models/Qwen2-7B-Instruct
+
+# Qwen2 系列 (量化版本)
+hf download Qwen/Qwen2.5-7B-Instruct-GGUF --local-dir ~/Models/Qwen2.5-7B-Instruct-GGUF
 # QWen3 系列
-HF_ENDPOINT=https://hf-mirror.com huggingface-cli download bartowski/Qwen_Qwen3-30B-A3B-GGUF --include "*Q5_K_M.gguf" --local-dir ~/Downloads
+hf download bartowski/Qwen_Qwen3-30B-A3B-GGUF Qwen_Qwen3-30B-A3B-Q5_K_M.gguf --local-dir ~/Models
 # LLaMA 系列
-HF_ENDPOINT=https://hf-mirror.com huggingface-cli download bartowski/Meta-Llama-3.1-8B-Instruct-GGUF --include "*Q5_K_M.gguf" --local-dir ~/Models
-
+hf download bartowski/Meta-Llama-3.1-8B-Instruct-GGUF Meta-Llama-3.1-8B-Instruct-Q5_K_M.gguf --local-dir ~/Models
+hf download TheBloke/Llama-2-7B-GGUF llama-2-7b.Q4_K_M.gguf --local-dir ~/Models
 ```
-
-# safetensors 下載
-
-```
-wget https://hf-mirror.com/hfd/hfd.sh
-hfd.sh Qwen/Qwen3-30B-A3B --local-dir /Users/yangfengkai/Downloads/Qwen3-30B-A3B
-```
-

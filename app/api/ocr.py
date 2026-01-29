@@ -1,3 +1,4 @@
+import os
 import shutil
 from pathlib import Path
 from fastapi import APIRouter, UploadFile, File
@@ -13,6 +14,8 @@ from fastapi import Request
 # -1：盡量把所有層 offload 到 GPU（llama.cpp 會自動計算能放多少層，不會 OOM）
 # 0：完全不 offload，全跑在 CPU（最慢）
 n_gpu_layers = 0
+n_threads = min(16, os.cpu_count())  # 不要超過 CPU 核心數
+n_ctx = 1024  # context 越大越慢
 
 router = APIRouter()
 
@@ -74,7 +77,7 @@ async def ocr_upload_file(file: UploadFile = File(...)):
 
 # 初始化一次
 tokenizer = AutoTokenizer.from_pretrained(str(QWEN_TOKENIZER), local_files_only=True, trust_remote_code=True)
-model = Llama(model_path=str(QWEN_GGUF), n_ctx=4096, n_threads=16, n_gpu_layers=n_gpu_layers)
+model = Llama(model_path=str(QWEN_GGUF), n_ctx=n_ctx, n_threads=n_threads, n_gpu_layers=n_gpu_layers)
 
 
 @router.post("/qwen3/generate")
@@ -86,7 +89,7 @@ async def generate(request: Request):
     return {"text": completion["choices"][0]["text"]}
 
 
-model = Llama(model_path=str(LLAMA_GGUF), n_ctx=2048, n_threads=8, n_gpu_layers=n_gpu_layers)
+model = Llama(model_path=str(LLAMA_GGUF), n_ctx=n_ctx, n_threads=n_threads, n_gpu_layers=n_gpu_layers, flash_attn=True)
 
 
 @router.post("/llama3/generate")
