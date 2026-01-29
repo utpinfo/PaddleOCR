@@ -15,12 +15,12 @@ print(f"多核 CPU，共 {num_cores} 核")
 # ------------------------
 ocr = PaddleOCR(
     lang="ch",
-    use_angle_cls=True,
-    enable_mkldnn=False,
-    rec_batch_num=20,
-    text_det_box_thresh=0.7,
-    text_det_thresh=0.4,
-    ocr_version="PP-OCRv4",
+    use_angle_cls=False,  # ❌ CPU 很慢，先關
+    enable_mkldnn=True,  # ✅ 一定要開
+    rec_batch_num=96,  # ✅ CPU 吞吐關鍵
+    text_det_box_thresh=0.6,  # 輕微放寬
+    text_det_thresh=0.3,  # 輕量模型建議
+    ocr_version="PP-OCRv3"
 )
 
 # ------------------------
@@ -32,13 +32,20 @@ _layout_model = None
 def get_layout_model():
     """延遲初始化 LayoutParser 模型，避免 uvicorn spawn 問題"""
     global _layout_model
-    if _layout_model is None:
-        _layout_model = lp.PaddleDetectionLayoutModel(
-            model_path="lp://PubLayNet/ppyolov2_r50vd_dcn_365e_publaynet",
-            label_map={0: "Text", 1: "Title", 2: "List", 3: "Table", 4: "Figure"},
-            device='cpu',
-            extra_config={"score_thresh": 0.5}  # 代替舊版 threshold
-        )
+    _layout_model = lp.PaddleDetectionLayoutModel(
+        model_path="lp://PP-DocLayout/ppyolov3_mobilenet_v3",
+        label_map={
+            0: "Text",
+            1: "Title",
+            2: "List",
+            3: "Table",
+            4: "Figure"
+        },
+        device="cpu",
+        extra_config={
+            "score_thresh": 0.3  # CPU + 文件實務建議值
+        }
+    )
     return _layout_model
 
 
